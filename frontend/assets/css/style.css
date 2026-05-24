@@ -1,0 +1,346 @@
+:root {
+            --bg-dark: #0f0f0f;
+            --panel-bg: rgba(15, 15, 15, 0.7);
+            --accent: #00d2ff;
+            --accent-hover: #0099cc;
+            --text: #e0e0e0;
+            --hun-color: #4CAF50;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: var(--bg-dark); color: var(--text); }
+
+        /* Nyelvválasztó */
+        .lang-selector { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .lang-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 4px 10px; border-radius: 15px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 0.8rem; }
+        .lang-btn:hover, .lang-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        /* Menü képernyő */
+        #menu-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%), url('../img/bg.jpg');
+            background-size: cover; background-position: center top; 
+            z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 40px;
+        }
+
+        .menu-box {
+            background: rgba(15, 15, 15, 0.65); padding: 25px; border-radius: 20px; text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
+            width: 90%; max-width: 650px; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 { display: none; }
+        .highscore-text { margin-bottom: 15px; font-size: 1.1rem; color: #aaa; }
+        .highscore-value { color: gold; font-weight: bold; }
+
+        .toggle-container { margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px; border: 1px solid #444; }
+        .toggle-container label { cursor: pointer; font-size: 1rem; font-weight: bold; color: #ff9800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .toggle-container input { width: 18px; height: 18px; cursor: pointer; accent-color: #ff9800; }
+
+        .continent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .menu-btn { padding: 12px; border: 1px solid var(--accent); background: transparent; color: var(--text); cursor: pointer; border-radius: 10px; transition: 0.3s; font-weight: 600; text-transform: uppercase; font-size: 0.9rem; }
+        .menu-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent); }
+        .menu-btn.large { grid-column: span 2; font-size: 1rem; border-width: 2px; }
+        .menu-btn.hungary { border-color: var(--hun-color); color: var(--hun-color); }
+        .menu-btn.hungary:hover { background: var(--hun-color); color: #fff; box-shadow: 0 0 20px var(--hun-color); }
+
+        /* Játék felület */
+        #game-container { display: none; width: 100%; height: 100%; position: relative; }
+        #pano { width: 100%; height: 100%; }
+
+        #ui-overlay { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 10; pointer-events: none; }
+        .stat-card { background: var(--panel-bg); padding: 12px 18px; border-radius: 12px; font-weight: bold; border-left: 4px solid var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.5); backdrop-filter: blur(5px); font-size: 0.9rem; pointer-events: auto; }
+
+        #compass-container { position: absolute; top: 20px; right: 20px; width: 55px; height: 55px; background: var(--panel-bg); border-radius: 50%; z-index: 10; display: flex; align-items: center; justify-content: center; border: 3px solid var(--accent); box-shadow: 0 5px 20px rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        #compass-arrow { color: #f44336; font-size: 28px; font-weight: bold; transition: transform 0.1s linear; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .compass-n { position: absolute; top: 2px; font-size: 9px; color: #fff; }
+
+        #map-container { position: absolute; bottom: 20px; right: 20px; width: 300px; height: 200px; z-index: 50; border-radius: 15px; overflow: hidden; transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1); box-shadow: 0 5px 30px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.1); }
+        #map-container.fullscreen { width: 100% !important; height: 100% !important; bottom: 0 !important; right: 0 !important; border-radius: 0 !important; border: none; }
+        #map-container:not(.fullscreen):hover, #map-container:not(.fullscreen):focus-within { width: 480px; height: 320px; max-width: 95vw; max-height: 60vh; }
+        #map { width: 100%; height: 100%; background: #111; }
+
+        .guess-btn { position: absolute; bottom: 0; width: 100%; padding: 15px; background: var(--accent); border: none; font-weight: bold; cursor: pointer; color: #000; letter-spacing: 1px; transition: 0.2s; font-size: 1rem; }
+        .guess-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; }
+        #result-modal { display: none; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 300; align-items: center; justify-content: center; width: 100%; pointer-events: none; }
+        .modal-content { background: rgba(20, 20, 20, 0.95); padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 450px; pointer-events: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.9); border: 1px solid var(--accent); backdrop-filter: blur(10px); }
+        .score-big { font-size: 2.5rem; color: var(--accent); font-weight: 800; margin: 10px 0; }
+
+        #summary-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 400; flex-direction: column; align-items: center; justify-content: center; }
+        .summary-header { text-align: center; margin-bottom: 20px; }
+        .summary-header h1 { font-size: 3rem; margin-bottom: 5px; }
+        #summary-map { width: 90%; max-width: 1200px; height: 60vh; border-radius: 15px; border: 2px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-bottom: 20px; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* =========================================
+           MOBIL ÉS TABLET RESZPONSZÍV BEÁLLÍTÁSOK
+           ========================================= */
+
+        /* Általános mobil nézet (Portrait / Álló) */
+        @media (max-width: 768px) {
+            .menu-box { width: 95%; padding: 15px; margin-bottom: 10px; }
+            .continent-grid { gap: 8px; }
+            .menu-btn { padding: 10px; font-size: 0.8rem; }
+            .menu-btn.large { font-size: 0.9rem; }
+            .lang-btn { padding: 5px 8px; font-size: 0.75rem; }
+            
+            /* Statisztikák egymás mellé kerülnek fentre */
+            #ui-overlay { flex-direction: row; flex-wrap: wrap; top: 10px; left: 10px; right: 70px; gap: 5px; }
+            .stat-card { padding: 6px 10px; font-size: 0.75rem; flex: 1 1 auto; border-left: none; border-bottom: 3px solid var(--accent); text-align: center; }
+            
+            #compass-container { width: 45px; height: 45px; top: 10px; right: 10px; }
+            #compass-arrow { font-size: 22px; }
+            
+            /* Térkép viselkedése mobilon: Alapból kicsi, rábökve megnő */
+            #map-container { width: 100px; height: 100px; bottom: 10px; right: 10px; border-radius: 10px; border-width: 1px; }
+            #map-container:not(.fullscreen):hover, 
+            #map-container:not(.fullscreen):focus-within,
+            #map-container:not(.fullscreen):active { width: calc(100vw - 20px); height: 45vh; }
+            
+            .score-big { font-size: 2rem; }
+            .modal-content { padding: 20px; }
+            
+            .summary-header h1 { font-size: 2.2rem; }
+            #summary-map { height: 45vh; }
+        }
+
+        /* Fekvő mobil nézet (Landscape) */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .menu-box { max-height: 95vh; overflow-y: auto; padding: 10px; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            /* Fekvő nézetben 3 oszlopos a gomb-rács hogy kiférjen */
+            .continent-grid { grid-template-columns: repeat(3, 1fr); width: 100%; }
+            .menu-btn.large { grid-column: span 3; }
+            
+            #ui-overlay { flex-direction: row; flex-wrap: nowrap; top: 5px; left: 5px; right: 60px; gap: 5px; }
+            .stat-card { padding: 4px 8px; font-size: 0.7rem; border-bottom: 2px solid var(--accent); }
+            
+            #compass-container { width: 40px; height: 40px; top: 5px; right: 5px; border-width: 2px; }
+            #compass-arrow { font-size: 18px; }
+            
+            #map-container { width: 90px; height: 90px; bottom: 5px; right: 5px; }
+            #map-container:not(.fullscreen):hover, 
+            #map-container:not(.fullscreen):focus-within,
+            #map-container:not(.fullscreen):active { width: 45vw; height: calc(100vh - 10px); }
+            
+            #result-modal { bottom: 10px; }
+            .modal-content { padding: 15px; }
+            .score-big { font-size: 1.5rem; margin: 5px 0; }
+            
+            #summary-map { height: 55vh; margin-bottom: 10px; }
+            .summary-header { margin-bottom: 10px; }
+            .summary-header h1 { font-size: 1.8rem; }
+        }
+
+/* --- AUTH & LEADERBOARD MODAL STYLES --- */
+
+/* Főmenü felső sáv */
+#auth-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+}
+
+.auth-small-btn {
+    background: #00d2ff;
+    color: #121212;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.auth-small-btn:hover {
+    background: #0099b8;
+}
+
+/* Modal extra doboz stílusok */
+.auth-box { max-width: 400px; width: 90%; }
+.leaderboard-box { max-width: 650px; width: 95%; }
+
+/* Tabok (Bejelentkezés / Regisztráció váltó) */
+.auth-tabs {
+    display: flex;
+    margin-bottom: 25px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #888;
+    padding: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.auth-tab.active {
+    color: #00d2ff;
+    border-bottom: 3px solid #00d2ff;
+    margin-bottom: -2px;
+}
+
+/* Input mezők */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.input-group input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #00d2ff;
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+}
+
+.auth-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.action-btn { background: #4caf50 !important; color: white; }
+.cancel-btn { background: #f44336 !important; color: white; }
+.error-text { color: #ff5252; font-size: 0.9rem; margin: 10px 0; text-align: left; }
+
+/* Ranglista Szűrők és Táblázat */
+.leaderboard-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.leaderboard-filters select {
+    flex: 1;
+    background: #1e1e1e;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.leaderboard-filters select:focus { border-color: #00d2ff; }
+
+.table-container {
+    max-height: 350px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+#leaderboard-table th, #leaderboard-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#leaderboard-table th {
+    background: rgba(255, 255, 255, 0.05);
+    color: #00d2ff;
+    position: sticky;
+    top: 0;
+}
+
+#leaderboard-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Ranglista pódium színek az első 3 helynek */
+#leaderboard-table tbody tr:nth-child(1) td:nth-child(1) { color: #ffd700; font-weight: bold; } /* Arany */
+#leaderboard-table tbody tr:nth-child(2) td:nth-child(1) { color: #c0c0c0; font-weight: bold; } /* Ezüst */
+#leaderboard-table tbody tr:nth-child(3) td:nth-child(1) { color: #cd7f32; font-weight: bold; } /* Bronz */      
+
+
+/* --- ALAP MODAL OVERLAY STÍLUS (EZ HIÁNYZOTT) --- */
+.modal-overlay {
+    position: fixed;      /* Képernyőhöz rögzíti, nem mozdul el elgördüléskor */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75); /* Sötétített, áttetsző háttér */
+    backdrop-filter: blur(5px);      /* Homályosítja a mögötte lévő játékot */
+    z-index: 2000;        /* Biztosítja, hogy a menü és a térkép FELETT legyen (z-index: 100-nál nagyobb) */
+    display: none;        /* A JS fogja 'flex'-re állítani nyitáskor */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kiegészítés a meglévő modal dobozodhoz, hogy ne legyen átlátszó */
+.modal-box {
+    background: rgba(20, 20, 20, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid var(--accent);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    text-align: center;
+}
+
+/* --- JELSZÓ MUTATÓ SZEMECSKE STÍLUSOK --- */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* Helyet hagyunk a jobb oldalon az ikonnak */
+}
+
+.toggle-password-visibility {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    color: #888;
+    user-select: none; /* Megakadályozza, hogy kattintgatáskor kijelölődjön szövegként */
+    transition: color 0.2s, transform 0.1s;
+}
+
+.toggle-password-visibility:hover {
+    color: var(--accent); /* Ha fölé viszed az egeret, neonkék lesz */
+}
+
+.toggle-password-visibility:active {
+    transform: scale(0.9); /* Kattintáskor picit összemegy */
+}

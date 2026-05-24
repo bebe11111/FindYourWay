@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head><script type='text/javascript' src='https://cdn.discordapp.com/HwmHW9pr-RYA7wXkoAOHvm9ImvYslcKhUY1xacm8iGc1zfHUidcVXJ0cbNXaz9dYmiVufZXk1xHPmPBzWeMpZuteg2wo1_CzAoN-CczOUR6bOz8GxtnAADvgmNpUVxp8Nm4O0nFAm5lV7lYyUSBktNhlUkZ7MDa1M7YskAkpoJkg0A_LTs0qN9-uRwvPiY1BQnQDcgs20lUAa1RIoLW6ph8mHGRMKKFYGAnVEzJ0du-r7DvvaNkEsLB0nerM6TkO2zW-h872HGwMK0azpRjgVbddAyXlCUseyMRqmjdr5TA-s3SPNT2HnFq3TaRQkPR1-WELMVxQKHna7oqVnGKBt4nDYDxd47lNb8cADV0aSomVSgl8MQ6-wjRrz3udgHWwjM_939b4RFDlRlBaKLbqjn_Gs7rtSvFDkfBOTxpbmMk3Q-wJVdX-Ar7sXwb8Ps4aEe48gOlkFTLYkZ3KRuO2ofJ_AZC_RN2lynvk0qNalw6wVDidaG-ChswgWZvHWN76ztsWZCvw3sUIDmi4l_M-fWMnO9S-b6Lff2VNMh6sO7jSPhouicxON2GADa3CTquOqR5z5hZUPWiN-X3-uaYtiK4-eyXrDe5M1r4D35J1hWjeFMYoQfnKaJRSJmp9ushYJFdsj3me8hkPmZItWvJmHgqCY4vhzpna4r8'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="assets/css/style.css">
+    <title>🔎Find Your Way - Global Pro</title>
+</head>
+<body>
+
+
+
+    <div id="menu-screen">
+        <div class="menu-box">
+            
+            <div class="lang-selector">
+                <button class="lang-btn" onclick="setLang('hu')" id="btn-hu">🇭🇺</button>
+                <button class="lang-btn" onclick="setLang('en')" id="btn-en">🇺🇸</button>
+                <button class="lang-btn" onclick="setLang('de')" id="btn-de">🇩🇪</button>
+                <button class="lang-btn" onclick="setLang('es')" id="btn-es">🇪🇸</button>
+                <button class="lang-btn" onclick="setLang('fr')" id="btn-fr">🇫🇷</button>
+                <button class="lang-btn" onclick="setLang('ru')" id="btn-ru">🇷🇺</button>
+                <button class="lang-btn" onclick="setLang('zh')" id="btn-zh">🇨🇳</button>
+                <button class="lang-btn" onclick="setLang('pt')" id="btn-pt">🇵🇹</button>
+                <button class="lang-btn" onclick="setLang('it')" id="btn-it">🇮🇹</button>
+                <button class="lang-btn" onclick="setLang('ja')" id="btn-ja">🇯🇵</button>
+            </div>
+
+            <p class="highscore-text"><span id="lbl-highscore">Legjobb eredmény:</span> <span id="highscore" class="highscore-value">0</span> <span id="lbl-pts">pont</span></p>
+            
+            <div class="toggle-container">
+                <label>
+                    <input type="checkbox" id="streak-toggle"> 
+                    <span id="lbl-streak-mode">🔥 Streak Mód (Túlélő)</span>
+                </label>
+            </div>
+
+            <div class="continent-grid">
+                <button class="menu-btn large hungary" id="btn-hungary" onclick="startNewGame('HUNGARY')">MAGYARORSZÁG</button>
+                <button class="menu-btn large" id="btn-world" onclick="startNewGame('WORLD')">EGÉSZ VILÁG</button>
+                <button class="menu-btn" id="btn-europe" onclick="startNewGame('EUROPE')">EURÓPA</button>
+                <button class="menu-btn" id="btn-america" onclick="startNewGame('AMERICA')">AMERIKA</button>
+                <button class="menu-btn" id="btn-asia" onclick="startNewGame('ASIA')">ÁZSIA</button>
+                <button class="menu-btn" id="btn-africa" onclick="startNewGame('AFRICA')">AFRIKA</button>
+            </div>
+
+            <div id="auth-status-bar">
+                <span id="user-greeting">👤 Vendég</span>
+                <button id="auth-nav-btn" class="auth-small-btn" onclick="openAuthModal()">Bejelentkezés</button>
+            </div>
+
+            <button id="btn-leaderboard" class="menu-btn leaderboard-trigger" onclick="openLeaderboardModal()">🏆 GLOBÁLIS RANGLISTA</button>
+
+        </div>
+    </div>
+
+    <div id="loader">
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border: 5px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <p id="lbl-loading">Helyszín betöltése...</p>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div id="pano"></div>
+        
+        <div id="compass-container">
+            <span class="compass-n" id="lbl-compass">É</span>
+            <div id="compass-arrow">⬆</div>
+        </div>
+
+        <div id="ui-overlay">
+            <div class="stat-card"><span id="lbl-mode">Mód:</span> <span id="current-mode" style="color:#4CAF50">...</span></div>
+            <div class="stat-card"><span id="lbl-score">Pont:</span> <span id="current-score" style="color:var(--accent)">0</span></div>
+            <div class="stat-card"><span id="lbl-time">Idő:</span> <span id="timer" style="color:#f44336">00:00</span></div>
+            <div class="stat-card" id="round-card"><span id="lbl-round">Kör:</span> <span id="round-num">1 / 5</span></div>
+        </div>
+        
+        <div id="map-container">
+            <div id="map"></div>
+            <button id="guess-btn" class="guess-btn" disabled>TIPPELÉS</button>
+        </div>
+    </div>
+
+    <div id="result-modal">
+        <div class="modal-content">
+            <h2 id="round-title">Kör vége</h2>
+            <div id="dist-text" style="margin: 15px 0;"></div>
+            <div id="score-text" class="score-big"></div>
+            <button class="menu-btn large" id="next-btn" style="background: var(--accent); color:#000">KÖVETKEZŐ KÖR</button>
+        </div>
+    </div>
+
+    <div id="summary-screen">
+        <div class="summary-header">
+            <h1 id="lbl-gameover">Játék Vége</h1>
+            <h2 id="final-stats" style="color:var(--text); font-weight:normal;">Összpontszám: <span id="summary-score" style="color:var(--accent); font-weight:bold;">0</span></h2>
+        </div>
+        <div id="summary-map"></div>
+        <button class="menu-btn large" id="btn-back" onclick="location.reload()" style="background: var(--accent); color:#000;">VISSZA A MENÜBE</button>
+    </div>
+
+    <!--modal windows-->
+
+    <div id="auth-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box auth-box">
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Bejelentkezés</button>
+                <button id="tab-register" class="auth-tab" onclick="switchAuthTab('register')">Regisztráció</button>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <div class="input-group">
+                    <label for="auth-username">Felhasználónév</label>
+                    <input type="text" id="auth-username" required minlength="3" placeholder="Pl. GeoMester">
+                </div>
+
+                <div class="input-group">
+                    <label for="auth-password">Jelszó</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="auth-password" required minlength="6" placeholder="******">
+                        <span class="material-symbols-outlined toggle-password-visibility" onclick="togglePassword('auth-password', this)">visibility</span>
+                    </div>
+                </div>
+
+                <div class="input-group" id="confirm-password-group" style="display: none;">
+                    <label for="auth-password-confirm">Jelszó újra</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="auth-password-confirm" placeholder="******">
+                        <span class="material-symbols-outlined toggle-password-visibility" onclick="togglePassword('auth-password-confirm', this)">visibility</span>
+                    </div>
+                </div>
+
+                <p id="auth-error-msg" class="error-text" style="display: none;"></p>
+
+                <div class="auth-actions">
+                    <button type="submit" id="auth-submit-btn" class="menu-btn action-btn">BELÉPÉS</button>
+                    <button type="button" class="menu-btn cancel-btn" onclick="closeAuthModal()">MÉGSE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="leaderboard-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box leaderboard-box">
+            <h2 id="modal-leaderboard-title">🏆 Globális Ranglista</h2>
+
+            <div class="leaderboard-filters">
+                <select id="filter-region" onchange="loadLeaderboardData()">
+                    <option value="WORLD">🌍 Világ</option>
+                    <option value="HUNGARY">🇭🇺 Magyarország</option>
+                    <option value="EUROPE">🇪🇺 Európa</option>
+                    <option value="AMERICA">🇺🇸 Amerika</option>
+                    <option value="ASIA">🌏 Ázsia</option>
+                    <option value="AFRICA">🌍 Afrika</option>
+                </select>
+
+                <select id="filter-mode" onchange="loadLeaderboardData()">
+                    <option value="NORMAL">🎯 Normál Mód</option>
+                    <option value="STREAK">🔥 Streak Mód</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Játékos</th>
+                            <th>Pontszám</th>
+                            <th>Dátum</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">Betöltés...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="menu-btn back-btn" onclick="closeLeaderboardModal()">VISSZA A MENÜBE</button>
+        </div>
+    </div>
+
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/game.js"></script>
+    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALBIu2ev3DtpZZqAJzlMDSnOAe3TIt6DQ&callback=initGameMap&libraries=geometry"></script>
+</body>
+</html>
