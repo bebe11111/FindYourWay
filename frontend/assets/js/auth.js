@@ -185,48 +185,71 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // --- AUTOMATIKUS KIJELENTKEZTETÉS INAKTIVITÁS MIATT ---
+// --- AUTOMATIKUS KIJELENTKEZTETÉS (LAPBEZÁRÁST IS TÚLÉLŐ VERZIÓ) ---
 const InactivityManager = {
     timer: null,
-    // 4 óra ezredmásodpercben (4 * 60 * 60 * 1000)
-    TIMEOUT_LIMIT: 10 * 1000, 
+    // Teszteléshez írd át: 10 * 1000
+    // Élesben: 4 * 60 * 60 * 1000
+    TIMEOUT_LIMIT: 4 * 60 * 60 * 1000, 
 
     init() {
-        // Csak akkor indítjuk el a figyelőt, ha a felhasználó be van jelentkezve
         if (!localStorage.getItem('geoToken')) return;
 
-        console.log("🔒 Inaktivitás figyelő elindítva (4 óra)...");
+        console.log("🔒 Inaktivitás figyelő elindítva...");
 
-        // Események, amik aktivitásnak számítanak (ha ezek történnek, a játékos aktív)
-        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-        
-        // Minden aktivitásnál újraindítjuk a 4 órás számlálót
+        // 1. Azonnali ellenőrzés betöltéskor (Hátha lejárt az idő, amíg a lap be volt zárva)
+        if (this.isTimeExpired()) {
+            this.logoutUser("Biztonsági okokból kijelentkeztettünk, mert túl sokáig voltál távol.");
+            return; 
+        }
+
+        // 2. Figyeljük a kattintásokat, gépelést, stb.
+        const activityEvents = ['mousedown', 'keypress', 'scroll', 'touchstart'];
         activityEvents.forEach(event => {
-            window.addEventListener(event, () => this.resetTimer(), true);
+            window.addEventListener(event, () => this.registerActivity(), { passive: true });
         });
 
-        // Első indítás
-        this.resetTimer();
+        // 3. Figyeljük, ha a felhasználó visszavált a lapra egy másik fülről
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && this.isTimeExpired()) {
+                this.logoutUser("Biztonsági okokból kijelentkeztettünk, mert a háttérben lejárt az időd.");
+            }
+        });
+
+        // Elindítjuk az első mérést
+        this.registerActivity();
     },
 
-    resetTimer() {
-        // Töröljük az előző időzítőt
+    isTimeExpired() {
+        const lastActivity = localStorage.getItem('geoLastActivity');
+        if (!lastActivity) return false;
+
+        const now = Date.now();
+        const diff = now - parseInt(lastActivity, 10);
+        
+        return diff > this.TIMEOUT_LIMIT;
+    },
+
+    registerActivity() {
+        // 1. Elmentjük a jelenlegi milliszekundumot a localStorage-ba
+        localStorage.setItem('geoLastActivity', Date.now().toString());
+        
+        // 2. Újraindítjuk a memóriában lévő visszaszámlálót is (ha nyitva hagyja a lapot)
         clearTimeout(this.timer);
-        
-        // Új időzítő beállítása
-        this.timer = setTimeout(() => this.logoutUser(), this.TIMEOUT_LIMIT);
+        this.timer = setTimeout(() => {
+            this.logoutUser("4 óra inaktivitás telt el. Automatikus kijelentkeztetés...");
+        }, this.TIMEOUT_LIMIT);
     },
 
-    logoutUser() {
-        console.warn("⚠️ 4 óra inaktivitás telt el. Automatikus kijelentkeztetés...");
+    logoutUser(message) {
+        console.warn("⚠️", message);
         
-        // 1. Töröljük a belépési adatokat
+        // Takarítás!
         localStorage.removeItem('geoToken');
-        localStorage.removeItem('geoUser'); // ha tárolod a felhasználónevet is külön
+        localStorage.removeItem('geoUser');
+        localStorage.removeItem('geoLastActivity'); 
         
-        // 2. Értesítjük a felhasználót
-        alert("Biztonsági okokból kijelentkeztettünk, mivel 4 órája inaktív voltál.");
-
-        // 3. Frissítjük az oldalt, hogy visszaálljon a bejelentkező képernyő
-        window.location.reload();
+        alert(message);
+        window.location.reload(); // Frissítés, ami visszadob a menübe
     }
 };
