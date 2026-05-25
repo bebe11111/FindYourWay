@@ -2,57 +2,8 @@
 
 // --- GLOBÁLIS NYELVI SZÓTÁR ---
 const i18n = {
-    hu: { highScore: "Legjobb eredmény:", pts: "pont", streakMode: "🔥 Streak Mód (Túlélő)", btnHungary: "MAGYARORSZÁG", btnWorld: "EGÉSZ VILÁG", btnEurope: "EURÓPA", btnAmerica: "AMERIKA", btnAsia: "ÁZSIA", btnAfrica: "AFRIKA", loading: "Helyszín betöltése...", mode: "Mód:", score: "Pont:", time: "Idő:", round: "Kör:", streakLabel: "Streak:", guessBtn: "TIPPELÉS", roundEnd: "Kör vége", dist: "Távolság:", nextBtn: "KÖVETKEZŐ KÖR", gameOverBtn: "JÁTÉK VÉGE - ÖSSZESÍTÉS", streakAlive: "✅ Streak életben!", streakLost: "❌ Streak megszakadt!", max: "Max:", gameOverTitle: "Játék Vége", totalScore: "Összpontszám:", achievedStreak: "Elért Streak:", newRecord: "(Új Rekord! 🎉)", backMenu: "VISSZA A MENÜBE", compassN: "É", modes: { WORLD: "🌍 Világ", HUNGARY: "🇭🇺 Magyarország", EUROPE: "🇪🇺 Európa", AMERICA: "🇺🇸 Amerika", ASIA: "🌏 Ázsia", AFRICA: "🌍 Afrika" }, realLoc: "Valós", guessLoc: "Tipp", 
-// --- AUTH (Bejelentkezés) ---
-        // Auth ablak
-        tabLogin: "Bejelentkezés",
-        tabRegister: "Regisztráció",
-        lblAuthUser: "Felhasználónév",
-        lblAuthPass: "Jelszó",
-        lblAuthPassConf: "Jelszó újra",
-        authPlaceholderUser: "Pl. GeoMester",
-        btnAuthSubmitLogin: "BELÉPÉS",
-        btnAuthSubmitReg: "REGISZTRÁCIÓ",
-        btnAuthCancel: "MÉGSE",
-        
-        // Ranglista ablak
-        modalLeaderboardTitle: "🏆 Globális Ranglista",
-        thRank: "#",
-        thPlayer: "Játékos",
-        thScore: "Pontszám",
-        thDate: "Dátum",
-        loadingLb: "Betöltés...",
-        emptyLb: "Nincsenek adatok.",
-        unknownUser: "Ismeretlen",
-        btnCloseLeaderboard: "VISSZA A MENÜBE"
-
-},
-    en: { highScore: "Highscore:", pts: "pts", streakMode: "🔥 Streak Mode (Survival)", btnHungary: "HUNGARY", btnWorld: "WORLDWIDE", btnEurope: "EUROPE", btnAmerica: "AMERICA", btnAsia: "ASIA", btnAfrica: "AFRICA", loading: "Loading location...", mode: "Mode:", score: "Score:", time: "Time:", round: "Round:", streakLabel: "Streak:", guessBtn: "MAKE GUESS", roundEnd: "Round Over", dist: "Distance:", nextBtn: "NEXT ROUND", gameOverBtn: "GAME OVER - SUMMARY", streakAlive: "✅ Streak alive!", streakLost: "❌ Streak lost!", max: "Max:", gameOverTitle: "Game Over", totalScore: "Total Score:", achievedStreak: "Achieved Streak:", newRecord: "(New Record! 🎉)", backMenu: "BACK TO MENU", compassN: "N", modes: { WORLD: "🌍 World", HUNGARY: "🇺🇸 Hungary", EUROPE: "🇪🇺 Europe", AMERICA: "🇺🇸 America", ASIA: "🌏 Asia", AFRICA: "🌍 Africa" }, realLoc: "Real", guessLoc: "Guess", 
-
-    // --- AUTH (Authentication) ---
-        // Auth Modal
-        tabLogin: "Login",
-        tabRegister: "Register",
-        lblAuthUser: "Username",
-        lblAuthPass: "Password",
-        lblAuthPassConf: "Confirm Password",
-        authPlaceholderUser: "E.g. GeoMaster",
-        btnAuthSubmitLogin: "LOGIN",
-        btnAuthSubmitReg: "REGISTER",
-        btnAuthCancel: "CANCEL",
-        
-        // Leaderboard Modal
-        modalLeaderboardTitle: "🏆 Global Leaderboard",
-        thRank: "Rank",
-        thPlayer: "Player",
-        thScore: "Score",
-        thDate: "Date",
-        loadingLb: "Loading...",
-        emptyLb: "No data available.",
-        unknownUser: "Unknown",
-        btnCloseLeaderboard: "BACK TO MENU"
-
-},
+    hu: { highScore: "Legjobb eredmény:", pts: "pont", streakMode: "🔥 Streak Mód (Túlélő)", btnHungary: "MAGYARORSZÁG", btnWorld: "EGÉSZ VILÁG", btnEurope: "EURÓPA", btnAmerica: "AMERIKA", btnAsia: "ÁZSIA", btnAfrica: "AFRIKA", loading: "Helyszín betöltése...", mode: "Mód:", score: "Pont:", time: "Idő:", round: "Kör:", streakLabel: "Streak:", guessBtn: "TIPPELÉS", roundEnd: "Kör vége", dist: "Távolság:", nextBtn: "KÖVETKEZŐ KÖR", gameOverBtn: "JÁTÉK VÉGE - ÖSSZESÍTÉS", streakAlive: "✅ Streak életben!", streakLost: "❌ Streak megszakadt!", max: "Max:", gameOverTitle: "Játék Vége", totalScore: "Összpontszám:", achievedStreak: "Elért Streak:", newRecord: "(Új Rekord! 🎉)", backMenu: "VISSZA A MENÜBE", compassN: "É", modes: { WORLD: "🌍 Világ", HUNGARY: "🇭🇺 Magyarország", EUROPE: "🇪🇺 Európa", AMERICA: "🇺🇸 Amerika", ASIA: "🌏 Ázsia", AFRICA: "🌍 Afrika" }, realLoc: "Valós", guessLoc: "Tipp" },
+    en: { highScore: "Highscore:", pts: "pts", streakMode: "🔥 Streak Mode (Survival)", btnHungary: "HUNGARY", btnWorld: "WORLDWIDE", btnEurope: "EUROPE", btnAmerica: "AMERICA", btnAsia: "ASIA", btnAfrica: "AFRICA", loading: "Loading location...", mode: "Mode:", score: "Score:", time: "Time:", round: "Round:", streakLabel: "Streak:", guessBtn: "MAKE GUESS", roundEnd: "Round Over", dist: "Distance:", nextBtn: "NEXT ROUND", gameOverBtn: "GAME OVER - SUMMARY", streakAlive: "✅ Streak alive!", streakLost: "❌ Streak lost!", max: "Max:", gameOverTitle: "Game Over", totalScore: "Total Score:", achievedStreak: "Achieved Streak:", newRecord: "(New Record! 🎉)", backMenu: "BACK TO MENU", compassN: "N", modes: { WORLD: "🌍 World", HUNGARY: "🇺🇸 Hungary", EUROPE: "🇪🇺 Europe", AMERICA: "🇺🇸 America", ASIA: "🌏 Asia", AFRICA: "🌍 Africa" }, realLoc: "Real", guessLoc: "Guess" },
     de: { highScore: "Höchstpunktzahl:", pts: "Pkte", streakMode: "🔥 Streak-Modus (Überleben)", btnHungary: "UNGARN", btnWorld: "WELTWEIT", btnEurope: "EUROPA", btnAmerica: "AMERIKA", btnAsia: "ASIEN", btnAfrica: "AFRIKA", loading: "Ort wird geladen...", mode: "Modus:", score: "Punkte:", time: "Zeit:", round: "Runde:", streakLabel: "Streak:", guessBtn: "TIPP ABGEBEN", roundEnd: "Runde beendet", dist: "Entfernung:", nextBtn: "NÄCHSTE RUNDE", gameOverBtn: "SPIEL ENDE - ZUSAMMENFASSUNG", streakAlive: "✅ Streak lebt!", streakLost: "❌ Streak verloren!", max: "Max:", gameOverTitle: "Spiel Ende", totalScore: "Gesamtpunktzahl:", achievedStreak: "Erreichter Streak:", newRecord: "(Neuer Rekord! 🎉)", backMenu: "ZURÜCK ZUM MENÜ", compassN: "N", modes: { WORLD: "🌍 Welt", HUNGARY: "🇭🇺 Ungarn", EUROPE: "🇪🇺 Europa", AMERICA: "🇺🇸 Amerika", ASIA: "🌏 Asien", AFRICA: "🌍 Afrika" }, realLoc: "Echt", guessLoc: "Tipp" },
     es: { highScore: "Récord:", pts: "pts", streakMode: "🔥 Modo Racha (Supervivencia)", btnHungary: "HUNGRÍA", btnWorld: "MUNDO", btnEurope: "EUROPA", btnAmerica: "AMÉRICA", btnAsia: "ASIA", btnAfrica: "ÁFRICA", loading: "Cargando ubicación...", mode: "Modo:", score: "Puntos:", time: "Tiempo:", round: "Ronda:", streakLabel: "Racha:", guessBtn: "ADIVINAR", roundEnd: "Fin de ronda", dist: "Distancia:", nextBtn: "SIGUIENTE RONDA", gameOverBtn: "FIN DEL JUEGO", streakAlive: "✅ ¡Racha viva!", streakLost: "❌ ¡Racha perdida!", max: "Máx:", gameOverTitle: "Fin del Juego", totalScore: "Total:", achievedStreak: "Racha lograda:", newRecord: "(¡Récord! 🎉)", backMenu: "MENÚ PRINCIPAL", compassN: "N", modes: { WORLD: "🌍 Mundo", HUNGARY: "🇭🇺 Hungría", EUROPE: "🇪🇺 Europa", AMERICA: "🇺🇸 América", ASIA: "🌏 Asia", AFRICA: "🌍 África" }, realLoc: "Real", guessLoc: "Tipp" },
     fr: { highScore: "Meilleur score:", pts: "pts", streakMode: "🔥 Mode Série (Survie)", btnHungary: "HONGRIE", btnWorld: "MONDE", btnEurope: "EUROPE", btnAmerica: "AMÉRIQUE", btnAsia: "ASIE", btnAfrica: "AFRIQUE", loading: "Chargement...", mode: "Mode:", score: "Points:", time: "Temps:", round: "Manche:", streakLabel: "Série:", guessBtn: "DEVINER", roundEnd: "Fin de manche", dist: "Distance:", nextBtn: "SUIVANT", gameOverBtn: "FIN DU JUEGO", streakAlive: "✅ Série continue!", streakLost: "❌ Série brisée!", max: "Max:", gameOverTitle: "Fin du Jeu", totalScore: "Score Total:", achievedStreak: "Série:", newRecord: "(Record! 🎉)", backMenu: "MENU", compassN: "N", modes: { WORLD: "🌍 Monde", HUNGARY: "🇭🇺 Hongrie", EUROPE: "🇪🇺 Europe", AMERICA: "🇺🇸 Amérique", ASIA: "🌏 Asie", AFRICA: "🌍 Afrique" }, realLoc: "Réel", guessLoc: "Deviné" },
