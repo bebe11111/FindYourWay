@@ -179,23 +179,21 @@ function endGame() {
     const t = i18n[currentLang];
     document.getElementById('final-stats').innerHTML = `${t.totalScore} <b>${state.score}</b>` + (state.isStreakMode ? `<br>${t.achievedStreak} <b>${state.streak}</b>` : "");
     
-    // --- 🚀 ÚJ RÉSZ: ADATBÁZISBA MENTÉS ---
-    // Csak akkor mentünk, ha van Token (be van lépve a játékos)
-
+    // --- 🚀 ÚJ RÉSZ: ADATBÁZISBA MENTÉS (JAVÍTVA) ---
+    // Csak akkor mentünk, ha be van lépve a játékos
     if (localStorage.getItem('geoToken')) {
-
         const mode = state.isStreakMode ? 'STREAK' : 'NORMAL'; 
         const finalScore = state.isStreakMode ? state.streak : state.score;
-        const region = typeof currentRegion !== 'undefined' ? currentRegion.toUpperCase() : 'WORLD';
+        
+        // 🎯 FIX: Most már a state.currentRegion-t olvassuk ki, ami garantáltan létezik!
+        const region = state.currentRegion ? state.currentRegion.toUpperCase() : 'WORLD';
 
-        console.log("⏳ Pontszám elküldése az adatbázisba...");
+        console.log(`⏳ Pontszám elküldése az adatbázisba... Régió: ${region}, Mód: ${mode}, Pont: ${finalScore}`);
         
         ApiService.saveScore(region, mode, finalScore)
-            .then(() => console.log("✅ Pontszám sikeresen elmentve!"))
-            .catch(err => console.error("❌ Hiba:", err));
+            .then(() => console.log("✅ Pontszám sikeresen elmentve az Aiven-be!"))
+            .catch(err => console.error("❌ Hiba a mentés során:", err));
     }
-
-
     // --- ÚJ RÉSZ VÉGE ---
 
     // Eredeti térkép kirajzoló kód folytatódik
@@ -230,10 +228,10 @@ async function loadLeaderboardData() {
         // 1. Lekérjük a nyers választ a szerverről
         const rawResponse = await ApiService.getLeaderboard(region, mode);
         
-        // 🛠️ EZ A LEGFONTOSABB: Kiírjuk a konzolra, hogy lássuk a szerver válaszát!
+        // 🛠️ Kiírjuk a konzolra, hogy lássuk a szerver pontos válaszát (F12 -> Console fül)
         console.log("Szerver válasza a ranglistára:", rawResponse);
 
-        // 2. Okos adat-kicsomagolás (ha tömb, ha objektum, megoldja)
+        // 2. Adat-kicsomagolás (ha tömb, ha objektum, megoldja)
         let actualScores = [];
         if (Array.isArray(rawResponse)) {
             actualScores = rawResponse;
@@ -243,7 +241,7 @@ async function loadLeaderboardData() {
             actualScores = rawResponse.data;
         }
 
-        // 3. Ha üres a lista
+        // 3. Ha teljesen üres a lista
         if (!actualScores || actualScores.length === 0) {
             tbody.innerHTML = `
                 <tr>
@@ -253,7 +251,7 @@ async function loadLeaderboardData() {
             return;
         }
 
-        // 4. Táblázat generálása
+        // 4. Táblázat HTML generálása
         let html = "";
         actualScores.forEach((entry, index) => {
             const rawDate = entry.created_at || entry.date || entry.timestamp;
