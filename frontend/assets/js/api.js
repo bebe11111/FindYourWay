@@ -1,19 +1,61 @@
 
 
 // --- API RENDŐRSÉG (Szerver kommunikáció) ---
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://findyourway-84ta.onrender.com";
 
 const ApiService = {
+    // Segédfüggvény, ami automatikusan hozzárakja a Tokent a fejléchez, ha be vagyunk lépve
+    getHeaders() {
+        const token = localStorage.getItem('geoToken');
+        return {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+        };
+    },
+
+    // 🔑 Bejelentkezés
     async login(username, password) {
-        // Ide jön majd a bejelentkezés fetch kérése
+        return await fetch(`${API_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
     },
+
+    // 📝 Regisztráció
     async register(username, password) {
-        // Ide jön majd a regisztráció fetch kérése
+        return await fetch(`${API_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
     },
+
+    // 🏆 Pontszám mentése az Aiven adatbázisba
     async saveScore(region, mode, score) {
-        // Ide jön majd a pontszám mentése
+        try {
+            const response = await fetch(`${API_URL}/api/scores`, {
+                method: 'POST',
+                headers: this.getHeaders(),
+                body: JSON.stringify({ region, mode, score })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error("Hiba a pontszám mentésekor:", error);
+        }
     },
+
+    // 📊 Ranglista lekérése
     async getLeaderboard(region, mode) {
-        // Ide jön majd a ranglista lekérése
+        try {
+            const response = await fetch(`${API_URL}/api/scores?region=${region}&mode=${mode}`, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+            return await response.json();
+        } catch (error) {
+            console.error("Hiba a ranglista lekérésekor:", error);
+            return [];
+        }
     }
 };

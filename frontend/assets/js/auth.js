@@ -94,33 +94,75 @@ function closeLeaderboardModal() {
     document.getElementById('leaderboard-modal').style.display = 'none';
 }
 
-// --- FORM ELKÜLDÉSE (EGYELŐRE TESZT FUNKCIÓ) ---
-function handleAuthSubmit(event) {
+// --- FORM ELKÜLDÉSE (AZ API SERVICE HASZNÁLATÁVAL) ---
+async function handleAuthSubmit(event) {
     event.preventDefault(); // Megakadályozza az oldal újratöltését
     
     const username = document.getElementById('auth-username').value;
     const password = document.getElementById('auth-password').value;
     const confirmPassword = document.getElementById('auth-password-confirm').value;
     const errorMsg = document.getElementById('auth-error-msg');
+    const submitBtn = document.getElementById('auth-submit-btn');
 
+    // Regisztrációnál jelszó egyezés ellenőrzése
     if (AuthManager.currentTab === 'register' && password !== confirmPassword) {
         errorMsg.innerText = "A két jelszó nem egyezik meg!";
         errorMsg.style.display = 'block';
+        errorMsg.style.color = "#e74c3c";
         return;
     }
 
-    // Ideiglenes mock (szimulált) bejelentkezés, amíg a backend nem fut:
-    alert(`Sikeres ${AuthManager.currentTab === 'login' ? 'bejelentkezés' : 'regisztráció'}! (Szerver nélkül, helyi teszt)`);
-    
-    // Elmentjük helyileg, hogy lássuk a UI változását
-    localStorage.setItem('geoToken', 'kamu-teszt-token');
-    localStorage.setItem('geoUsername', username);
-    
-    AuthManager.token = 'kamu-teszt-token';
-    AuthManager.username = username;
-    
-    AuthManager.updateAuthUI();
-    closeAuthModal();
+    // --- UX: SZERVER ÉBREDEZIK TÖLTŐKÉPERNYŐ BEKAPCSOLÁSA ---
+    submitBtn.disabled = true;
+    errorMsg.innerText = "⏳ Kapcsolódás a szerverhez... (Ha a szerver aludt, ez eltarthat 30-50 másodpercig, kérjük várj!)";
+    errorMsg.style.display = 'block';
+    errorMsg.style.color = "#e67e22"; // Narancssárga figyelemfelhívás
+
+    try {
+        let response;
+        
+        // Eldöntjük, hogy a login vagy register metódust hívjuk meg az ApiService-ből
+        if (AuthManager.currentTab === 'login') {
+            response = await ApiService.login(username, password);
+        } else {
+            response = await ApiService.register(username, password);
+        }
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // SIKER!
+            errorMsg.innerText = "✅ Sikeres csatlakozás!";
+            errorMsg.style.color = "#2ecc71"; // Zöld
+
+            // Elmentjük a valódi adatokat
+            localStorage.setItem('geoToken', data.token);
+            localStorage.setItem('geoUsername', username);
+            
+            AuthManager.token = data.token;
+            AuthManager.username = username;
+            AuthManager.updateAuthUI();
+            
+            // Kis hatásszünet után bezárjuk a modalt
+            setTimeout(() => {
+                closeAuthModal();
+                submitBtn.disabled = false;
+            }, 800);
+
+        } else {
+            // A szerver hibát dobott vissza (pl. már létezik a felhasználó)
+            errorMsg.innerText = `❌ Hiba: ${data.message || 'Sikertelen azonosítás'}`;
+            errorMsg.style.color = "#e74c3c";
+            submitBtn.disabled = false;
+        }
+
+    } catch (error) {
+        // Hálózati összeomlás (ha teljesen áll a Render)
+        console.error("Kapcsolódási hiba:", error);
+        errorMsg.innerText = "❌ Nem sikerült elérni a szervert. Próbáld újra kicsit később.";
+        errorMsg.style.color = "#e74c3c";
+        submitBtn.disabled = false;
+    }
 }
 
 // Jelszó láthatóságának váltása (Szem ikon)
