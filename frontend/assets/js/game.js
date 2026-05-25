@@ -43,6 +43,53 @@ function setLang(lang) {
     document.getElementById('btn-back').innerText = t.backMenu;
     document.getElementById('lbl-compass').innerText = t.compassN;
 
+    const tabLogin = document.getElementById('tab-login');
+    if (tabLogin) tabLogin.innerText = t.tabLogin;
+
+    const tabRegister = document.getElementById('tab-register');
+    if (tabRegister) tabRegister.innerText = t.tabRegister;
+
+    const lblAuthUser = document.getElementById('lbl-auth-user');
+    if (lblAuthUser) lblAuthUser.innerText = t.lblAuthUser;
+
+    const lblAuthPass = document.getElementById('lbl-auth-pass');
+    if (lblAuthPass) lblAuthPass.innerText = t.lblAuthPass;
+
+    const lblAuthPassConf = document.getElementById('lbl-auth-pass-conf');
+    if (lblAuthPassConf) lblAuthPassConf.innerText = t.lblAuthPassConf;
+
+    const authUserInp = document.getElementById('auth-username');
+    if (authUserInp) authUserInp.placeholder = t.authPlaceholderUser;
+
+    const btnAuthCancel = document.getElementById('btn-auth-cancel');
+    if (btnAuthCancel) btnAuthCancel.innerText = t.btnAuthCancel;
+
+    // A belépés gomb szövegét is cseréljük, attól függően, melyik fül van nyitva
+    const authSubmitBtn = document.getElementById('auth-submit-btn');
+    if (authSubmitBtn) {
+        authSubmitBtn.innerText = document.getElementById('tab-login').classList.contains('active') ? t.btnAuthSubmitLogin : t.btnAuthSubmitReg;
+    }
+
+    // --- RANGLISTA ABLAK FORDÍTÁSA ---
+    const modalLbTitle = document.getElementById('modal-leaderboard-title');
+    if (modalLbTitle) modalLbTitle.innerText = t.modalLeaderboardTitle;
+
+    const thRank = document.getElementById('th-rank');
+    if (thRank) thRank.innerText = t.thRank;
+
+    const thPlayer = document.getElementById('th-player');
+    if (thPlayer) thPlayer.innerText = t.thPlayer;
+
+    const thScore = document.getElementById('th-score');
+    if (thScore) thScore.innerText = t.thScore;
+
+    const thDate = document.getElementById('th-date');
+    if (thDate) thDate.innerText = t.thDate;
+
+    const btnCloseLb = document.getElementById('btn-close-leaderboard');
+    if (btnCloseLb) btnCloseLb.innerText = t.btnCloseLeaderboard;
+
+    
     if(state.currentRegion) {
         document.getElementById('current-mode').innerText = t.modes[state.currentRegion] + (state.isStreakMode ? " (🔥)" : "");
     }
@@ -217,48 +264,43 @@ async function loadLeaderboardData() {
     const mode = document.getElementById('filter-mode').value;
     const tbody = document.getElementById('leaderboard-body');
 
+    // 🎯 Behozzuk az aktuális nyelvet!
+    const t = i18n[currentLang];
+
     if (!tbody) return;
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="4" style="text-align:center;">⏳ Adatok lekérése a szerverről...</td>
+            <td colspan="4" style="text-align:center;">${t.loadingLb}</td>
         </tr>
     `;
 
     try {
-        // 1. Lekérjük a nyers választ a szerverről
         const rawResponse = await ApiService.getLeaderboard(region, mode);
-
-        // 2. Adat-kicsomagolás (ha tömb, ha objektum, megoldja)
+        
         let actualScores = [];
-        if (Array.isArray(rawResponse)) {
-            actualScores = rawResponse;
-        } else if (rawResponse && Array.isArray(rawResponse.scores)) {
-            actualScores = rawResponse.scores;
-        } else if (rawResponse && Array.isArray(rawResponse.data)) {
-            actualScores = rawResponse.data;
-        }
+        if (Array.isArray(rawResponse)) actualScores = rawResponse;
+        else if (rawResponse && Array.isArray(rawResponse.scores)) actualScores = rawResponse.scores;
+        else if (rawResponse && Array.isArray(rawResponse.data)) actualScores = rawResponse.data;
 
-        // 3. Ha teljesen üres a lista
         if (!actualScores || actualScores.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="4" style="text-align:center;">Még nincsenek pontszámok ebben a kategóriában. Légy te az első!</td>
+                    <td colspan="4" style="text-align:center;">${t.emptyLb}</td>
                 </tr>
             `;
             return;
         }
 
-        // 4. Táblázat HTML generálása
         let html = "";
         actualScores.forEach((entry, index) => {
             const rawDate = entry.created_at || entry.date || entry.timestamp;
-            const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString('hu-HU') : '-';
+            const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString(currentLang === 'hu' ? 'hu-HU' : 'en-US') : '-';
             
             html += `
                 <tr>
                     <td><b>#${index + 1}</b></td>
-                    <td>${entry.username || 'Ismeretlen'}</td>
+                    <td>${entry.username || t.unknownUser}</td>
                     <td><strong>${entry.score ?? 0}</strong></td>
                     <td>${formattedDate}</td>
                 </tr>
@@ -268,10 +310,10 @@ async function loadLeaderboardData() {
         tbody.innerHTML = html;
 
     } catch (error) {
-        console.error("Ranglista kirajzolási hiba a frontenden:", error);
+        console.error("Ranglista hiba:", error);
         tbody.innerHTML = `
             <tr>
-                <td colspan="4" style="text-align:center; color: #e74c3c;">❌ Nem sikerült betölteni a ranglistát. (Hiba a konzolban)</td>
+                <td colspan="4" style="text-align:center; color: #e74c3c;">❌ Error loading data.</td>
             </tr>
         `;
     }

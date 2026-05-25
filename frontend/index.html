@@ -112,12 +112,12 @@
 
             <form id="auth-form" onsubmit="handleAuthSubmit(event)">
                 <div class="input-group">
-                    <label for="auth-username">Felhasználónév</label>
+                    <label id="lbl-auth-user" for="auth-username">Felhasználónév</label>
                     <input type="text" id="auth-username" required minlength="3" placeholder="Pl. GeoMester">
                 </div>
 
                 <div class="input-group">
-                    <label for="auth-password">Jelszó</label>
+                    <label id="lbl-auth-pass" for="auth-password">Jelszó</label>
                     <div class="password-wrapper">
                         <input type="password" id="auth-password" required minlength="6" placeholder="******">
                         <span class="material-symbols-outlined toggle-password-visibility" onclick="togglePassword('auth-password', this)">visibility</span>
@@ -125,7 +125,7 @@
                 </div>
 
                 <div class="input-group" id="confirm-password-group" style="display: none;">
-                    <label for="auth-password-confirm">Jelszó újra</label>
+                    <label id="lbl-auth-pass-conf" for="auth-password-confirm">Jelszó újra</label>
                     <div class="password-wrapper">
                         <input type="password" id="auth-password-confirm" placeholder="******">
                         <span class="material-symbols-outlined toggle-password-visibility" onclick="togglePassword('auth-password-confirm', this)">visibility</span>
@@ -136,7 +136,7 @@
 
                 <div class="auth-actions">
                     <button type="submit" id="auth-submit-btn" class="menu-btn action-btn">BELÉPÉS</button>
-                    <button type="button" class="menu-btn cancel-btn" onclick="closeAuthModal()">MÉGSE</button>
+                    <button type="button" id="btn-auth-cancel" class="menu-btn cancel-btn" onclick="closeAuthModal()">MÉGSE</button>
                 </div>
             </form>
         </div>
@@ -166,21 +166,21 @@
                 <table id="leaderboard-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Játékos</th>
-                            <th>Pontszám</th>
-                            <th>Dátum</th>
+                            <th id="th-rank">#</th>
+                            <th id="th-player">Játékos</th>
+                            <th id="th-score">Pontszám</th>
+                            <th id="th-date">Dátum</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboard-body">
                         <tr>
-                            <td colspan="4" style="text-align:center;">Betöltés...</td>
+                            <td colspan="4" style="text-align:center;">${i18n[currentLang].loadingLb}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <button class="menu-btn back-btn" onclick="closeLeaderboardModal()">VISSZA A MENÜBE</button>
+            <button id="btn-close-leaderboard" class="menu-btn back-btn" onclick="closeLeaderboardModal()">VISSZA A MENÜBE</button>
         </div>
     </div>
 
