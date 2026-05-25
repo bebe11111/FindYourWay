@@ -190,7 +190,7 @@ const InactivityManager = {
     timer: null,
     // Teszteléshez írd át: 10 * 1000
     // Élesben: 4 * 60 * 60 * 1000
-    TIMEOUT_LIMIT: 10 * 1000, 
+    TIMEOUT_LIMIT: 4*60*60*1000, 
 
     init() {
         if (!localStorage.getItem('geoToken')) return;
