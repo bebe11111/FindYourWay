@@ -57,6 +57,7 @@ function playFail() { playTone(300, 'sawtooth', 0.3, 0.1); setTimeout(()=>playTo
 function initGameMap() {
     setLang(currentLang);
     AuthManager.init(); // Elindítjuk az Auth felületet is betöltéskor
+    InactivityManager.init(); // Elindítjuk az inaktivitás figyelőt
     document.getElementById('highscore').innerText = localStorage.getItem('geoHighScore') || 0;
     map = new google.maps.Map(document.getElementById("map"), { center: { lat: 20, lng: 0 }, zoom: 1, disableDefaultUI: true, zoomControl: true, gestureHandling: 'greedy', styles: MAP_STYLES });
     panorama = new google.maps.StreetViewPanorama(document.getElementById("pano"), { disableDefaultUI: true, showRoadLabels: false, motionTracking: false, motionTrackingControl: false });
@@ -227,9 +228,6 @@ async function loadLeaderboardData() {
     try {
         // 1. Lekérjük a nyers választ a szerverről
         const rawResponse = await ApiService.getLeaderboard(region, mode);
-        
-        // 🛠️ Kiírjuk a konzolra, hogy lássuk a szerver pontos válaszát (F12 -> Console fül)
-        console.log("Szerver válasza a ranglistára:", rawResponse);
 
         // 2. Adat-kicsomagolás (ha tömb, ha objektum, megoldja)
         let actualScores = [];

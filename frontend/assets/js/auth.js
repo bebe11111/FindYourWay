@@ -183,3 +183,50 @@ function togglePassword(inputId, iconElement) {
 document.addEventListener("DOMContentLoaded", () => {
     AuthManager.init();
 });
+
+// --- AUTOMATIKUS KIJELENTKEZTETÉS INAKTIVITÁS MIATT ---
+const InactivityManager = {
+    timer: null,
+    // 4 óra ezredmásodpercben (4 * 60 * 60 * 1000)
+    TIMEOUT_LIMIT: 10 * 1000, 
+
+    init() {
+        // Csak akkor indítjuk el a figyelőt, ha a felhasználó be van jelentkezve
+        if (!localStorage.getItem('geoToken')) return;
+
+        console.log("🔒 Inaktivitás figyelő elindítva (4 óra)...");
+
+        // Események, amik aktivitásnak számítanak (ha ezek történnek, a játékos aktív)
+        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        
+        // Minden aktivitásnál újraindítjuk a 4 órás számlálót
+        activityEvents.forEach(event => {
+            window.addEventListener(event, () => this.resetTimer(), true);
+        });
+
+        // Első indítás
+        this.resetTimer();
+    },
+
+    resetTimer() {
+        // Töröljük az előző időzítőt
+        clearTimeout(this.timer);
+        
+        // Új időzítő beállítása
+        this.timer = setTimeout(() => this.logoutUser(), this.TIMEOUT_LIMIT);
+    },
+
+    logoutUser() {
+        console.warn("⚠️ 4 óra inaktivitás telt el. Automatikus kijelentkeztetés...");
+        
+        // 1. Töröljük a belépési adatokat
+        localStorage.removeItem('geoToken');
+        localStorage.removeItem('geoUser'); // ha tárolod a felhasználónevet is külön
+        
+        // 2. Értesítjük a felhasználót
+        alert("Biztonsági okokból kijelentkeztettünk, mivel 4 órája inaktív voltál.");
+
+        // 3. Frissítjük az oldalt, hogy visszaálljon a bejelentkező képernyő
+        window.location.reload();
+    }
+};
