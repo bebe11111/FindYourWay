@@ -165,6 +165,8 @@ function resetRound() {
     map.setCenter({lat: 20, lng: 0}); map.setZoom(1);
 }
 
+console.log(state);
+
 function endGame() {
     document.getElementById('game-container').style.display = 'none';
     document.getElementById('result-modal').style.display = 'none';
@@ -212,14 +214,12 @@ function endGame() {
 }
 
 async function loadLeaderboardData() {
-    // 1. Kiolvassuk a legördülő menük aktuálisan kiválasztott értékeit (pl. WORLD, NORMAL)
     const region = document.getElementById('filter-region').value;
     const mode = document.getElementById('filter-mode').value;
     const tbody = document.getElementById('leaderboard-body');
 
     if (!tbody) return;
 
-    // 2. Töltési állapot mutatása a táblázatban
     tbody.innerHTML = `
         <tr>
             <td colspan="4" style="text-align:center;">⏳ Adatok lekérése a szerverről...</td>
@@ -227,11 +227,24 @@ async function loadLeaderboardData() {
     `;
 
     try {
-        // 3. Lekérjük a szűrt adatokat az API-n keresztül
-        const scores = await ApiService.getLeaderboard(region, mode);
+        // 1. Lekérjük a nyers választ a szerverről
+        const rawResponse = await ApiService.getLeaderboard(region, mode);
         
-        // Ha nincs adat vagy üres a válasz
-        if (!scores || scores.length === 0) {
+        // 🛠️ EZ A LEGFONTOSABB: Kiírjuk a konzolra, hogy lássuk a szerver válaszát!
+        console.log("Szerver válasza a ranglistára:", rawResponse);
+
+        // 2. Okos adat-kicsomagolás (ha tömb, ha objektum, megoldja)
+        let actualScores = [];
+        if (Array.isArray(rawResponse)) {
+            actualScores = rawResponse;
+        } else if (rawResponse && Array.isArray(rawResponse.scores)) {
+            actualScores = rawResponse.scores;
+        } else if (rawResponse && Array.isArray(rawResponse.data)) {
+            actualScores = rawResponse.data;
+        }
+
+        // 3. Ha üres a lista
+        if (!actualScores || actualScores.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="4" style="text-align:center;">Még nincsenek pontszámok ebben a kategóriában. Légy te az első!</td>
@@ -240,33 +253,29 @@ async function loadLeaderboardData() {
             return;
         }
 
-        // 4. HTML sorok felépítése a kapott adatokból
+        // 4. Táblázat generálása
         let html = "";
-        
-        scores.forEach((entry, index) => {
-            // Megpróbáljuk szépen leformázni a dátumot (magyar formátumra: ÉÉÉÉ. MM. DD.)
-            // A 'created_at' helyett azt a mezőnevet használd, amit a backend SQL lekérdezése visszaad!
-            const rawDate = entry.created_at || entry.date;
+        actualScores.forEach((entry, index) => {
+            const rawDate = entry.created_at || entry.date || entry.timestamp;
             const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString('hu-HU') : '-';
             
             html += `
                 <tr>
                     <td><b>#${index + 1}</b></td>
-                    <td>${entry.username}</td>
-                    <td><strong>${entry.score}</strong></td>
+                    <td>${entry.username || 'Ismeretlen'}</td>
+                    <td><strong>${entry.score ?? 0}</strong></td>
                     <td>${formattedDate}</td>
                 </tr>
             `;
         });
         
-        // 5. Befecskendezzük az elkészült sorokat a táblázatba
         tbody.innerHTML = html;
 
     } catch (error) {
-        console.error("Ranglista betöltési hiba:", error);
+        console.error("Ranglista kirajzolási hiba a frontenden:", error);
         tbody.innerHTML = `
             <tr>
-                <td colspan="4" style="text-align:center; color: #e74c3c;">❌ Nem sikerült elérni a szervert.</td>
+                <td colspan="4" style="text-align:center; color: #e74c3c;">❌ Nem sikerült betölteni a ranglistát. (Hiba a konzolban)</td>
             </tr>
         `;
     }
