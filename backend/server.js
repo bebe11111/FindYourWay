@@ -1,4 +1,6 @@
 require('dotenv').config();
+
+const vercel_url = "https://find-your-way-seven.vercel.app/";
 const express = require('express');
 const cors = require('cors');
 
