@@ -169,10 +169,34 @@ function endGame() {
     document.getElementById('game-container').style.display = 'none';
     document.getElementById('result-modal').style.display = 'none';
     document.getElementById('summary-screen').style.display = 'flex';
+    
+    // Eredeti helyi (böngészős) mentés
     const high = parseInt(localStorage.getItem('geoHighScore') || 0);
     if(state.score > high && !state.isStreakMode) localStorage.setItem('geoHighScore', state.score);
+    
     const t = i18n[currentLang];
     document.getElementById('final-stats').innerHTML = `${t.totalScore} <b>${state.score}</b>` + (state.isStreakMode ? `<br>${t.achievedStreak} <b>${state.streak}</b>` : "");
+    
+    // --- 🚀 ÚJ RÉSZ: ADATBÁZISBA MENTÉS ---
+    // Csak akkor mentünk, ha van Token (be van lépve a játékos)
+
+    if (localStorage.getItem('geoToken')) {
+
+        const mode = state.isStreakMode ? 'STREAK' : 'NORMAL'; 
+        const finalScore = state.isStreakMode ? state.streak : state.score;
+        const region = typeof currentRegion !== 'undefined' ? currentRegion.toUpperCase() : 'WORLD';
+
+        console.log("⏳ Pontszám elküldése az adatbázisba...");
+        
+        ApiService.saveScore(region, mode, finalScore)
+            .then(() => console.log("✅ Pontszám sikeresen elmentve!"))
+            .catch(err => console.error("❌ Hiba:", err));
+    }
+
+
+    // --- ÚJ RÉSZ VÉGE ---
+
+    // Eredeti térkép kirajzoló kód folytatódik
     if(!summaryMap) summaryMap = new google.maps.Map(document.getElementById("summary-map"), { styles: MAP_STYLES, gestureHandling: 'greedy' });
     const bounds = new google.maps.LatLngBounds();
     state.history.forEach((r, i) => {
@@ -185,4 +209,65 @@ function endGame() {
         }
     });
     setTimeout(() => { google.maps.event.trigger(summaryMap, 'resize'); summaryMap.fitBounds(bounds, {padding: 50}); }, 500); 
+}
+
+async function loadLeaderboardData() {
+    // 1. Kiolvassuk a legördülő menük aktuálisan kiválasztott értékeit (pl. WORLD, NORMAL)
+    const region = document.getElementById('filter-region').value;
+    const mode = document.getElementById('filter-mode').value;
+    const tbody = document.getElementById('leaderboard-body');
+
+    if (!tbody) return;
+
+    // 2. Töltési állapot mutatása a táblázatban
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="4" style="text-align:center;">⏳ Adatok lekérése a szerverről...</td>
+        </tr>
+    `;
+
+    try {
+        // 3. Lekérjük a szűrt adatokat az API-n keresztül
+        const scores = await ApiService.getLeaderboard(region, mode);
+        
+        // Ha nincs adat vagy üres a válasz
+        if (!scores || scores.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align:center;">Még nincsenek pontszámok ebben a kategóriában. Légy te az első!</td>
+                </tr>
+            `;
+            return;
+        }
+
+        // 4. HTML sorok felépítése a kapott adatokból
+        let html = "";
+        
+        scores.forEach((entry, index) => {
+            // Megpróbáljuk szépen leformázni a dátumot (magyar formátumra: ÉÉÉÉ. MM. DD.)
+            // A 'created_at' helyett azt a mezőnevet használd, amit a backend SQL lekérdezése visszaad!
+            const rawDate = entry.created_at || entry.date;
+            const formattedDate = rawDate ? new Date(rawDate).toLocaleDateString('hu-HU') : '-';
+            
+            html += `
+                <tr>
+                    <td><b>#${index + 1}</b></td>
+                    <td>${entry.username}</td>
+                    <td><strong>${entry.score}</strong></td>
+                    <td>${formattedDate}</td>
+                </tr>
+            `;
+        });
+        
+        // 5. Befecskendezzük az elkészült sorokat a táblázatba
+        tbody.innerHTML = html;
+
+    } catch (error) {
+        console.error("Ranglista betöltési hiba:", error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align:center; color: #e74c3c;">❌ Nem sikerült elérni a szervert.</td>
+            </tr>
+        `;
+    }
 }

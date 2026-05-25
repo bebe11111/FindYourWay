@@ -83,7 +83,6 @@ function switchAuthTab(tab) {
 // Ranglista ablak megnyitása
 function openLeaderboardModal() {
     document.getElementById('leaderboard-modal').style.display = 'flex';
-    // Ha már össze lesz kötve a backenddel, itt automatikusan le is kérjük az adatokat:
     if (typeof loadLeaderboardData === 'function') {
         loadLeaderboardData();
     }
