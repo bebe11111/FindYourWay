@@ -48,7 +48,8 @@ const ApiService = {
     // 📊 Ranglista lekérése
     async getLeaderboard(region, mode) {
         try {
-            const response = await fetch(`${API_URL}/api/scores/leaderboard?region=${region}&mode=${mode}`, {
+            // 🎯 FIX: Kérdőjelek helyett perjelekkel (/) fűzzük be a változókat, ahogy a backend várja!
+            const response = await fetch(`${API_URL}/api/scores/leaderboard/${region}/${mode}`, {
                 method: 'GET',
                 headers: this.getHeaders()
             });
